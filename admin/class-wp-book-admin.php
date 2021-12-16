@@ -229,7 +229,7 @@ class Wp_Book_Admin {
 			<label for="author_name"><?php _e( 'Author Name :', 'wp-book' ) ?></label><br/>
 			<?php $ath_name = get_book_meta( $post->ID, "book_author_name" );?>
 			<input name="author_name" id="author_name" type="text" value="<?php _e( $ath_name ); ?>" /><br/>
-			<label for="author_name"><?php _e( 'Author Name :', 'wp-book' ) ?></label><br/>
+			<label for="price"><?php _e( 'Price :', 'wp-book' ) ?></label><br/>
 			<input name="price" id="price" type="text"/><br/>
 			<label for="publisher"><?php _e( 'Publisher :', 'wp-book' ) ?></label><br/>
 			<input name="publisher" id="publisher" type="text"/><br/>
@@ -324,9 +324,10 @@ class Wp_Book_Admin {
 		$args = array(
 			'post_type' => 'book',
 			'post_status' => 'publish',
-			'author' => $atts['author_name']
 		);
-
+		if( $atts[ 'author_name' ] != '' ) {
+			$args[ 'author_name' ] = $atts[ 'author_name' ];
+		}
 		if( $atts[ 'book_id' ] != '' ){
 			$args[ 'p' ] = $atts[ 'book_id' ];
 		}
