@@ -99,7 +99,7 @@ class Wp_Book_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-book-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
-	public function wpb_	cust_post_type_book() {
+	public function wpb_cust_post_type_book() {
 
 		/*
 		* This function will add custom post type named 'Book'.
@@ -135,7 +135,7 @@ class Wp_Book_Admin {
 			'menu_position'			=> 6,
 			'rewrite'				=> array( 'slug' => 'book' ),
 			'capability_type'		=> 'post',
-			'supports'				=> array( 'title', 'editor', 'author', 'thumbnail' ),
+		//	'supports'				=> array( 'title', 'editor', 'author', 'thumbnail' ),
 		//	'taxonomies'			=> array( 'category', 'post_tag' ),
 			'show_in_rest'			=> true
 		);
@@ -143,7 +143,7 @@ class Wp_Book_Admin {
 		register_post_type( 'book', $args );
 	}
 
-	public function wpb_cust_hie_taxonomies() {
+	public function wpb_cust_hie_taxonomy() {
 
 		/*
 		* This function adds custom hierarchical taxonomy 'Category'.
@@ -204,5 +204,30 @@ class Wp_Book_Admin {
 
 		register_taxonomy( 'book-tag', array( 'book' ), $args );
 
+	}
+	public function wpb_cust_meta_box() {
+		add_meta_box( "wpb-meta-book",
+									"Book Details",
+									array( $this, "wpb_cust_meta_box_content" ),
+									"book",
+									"side",
+									"high" );
+	}
+
+	public function wpb_cust_meta_box_content( $post ) {
+		?>
+			<label for="meta_book_field1">Author Name : </label><br/>
+			<input name="meta_book_field1" id="meta_book_field1" type="text"/><br/>
+			<label for="meta_book_field2">Price : </label><br/>
+			<input name="meta_book_field2" id="meta_book_field2" type="text"/><br/>
+			<label for="meta_book_field3">Publisher : </label><br/>
+			<input name="meta_book_field3" id="meta_book_field3" type="text"/><br/>
+			<label for="meta_book_field4">Year : </label><br/>
+			<input name="meta_book_field4" id="meta_book_field4" type="text" maxlength="4"/><br/>
+			<label for="meta_book_field5">Edition : </label><br/>
+			<input name="meta_book_field5" id="meta_book_field5" type="text"/><br/>
+			<label for="meta_book_field6">URL : </label><br/>
+			<input name="meta_book_field6" id="meta_book_field6" type="text"/><br/>
+		<?php
 	}
 }
