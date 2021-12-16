@@ -99,6 +99,14 @@ class Wp_Book_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-book-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+	public function bookmeta_integrate_wpdb() {
+		global $wpdb;
+
+		$wpdb->bookmeta = $wpdb->prefix . 'bookmeta';
+		$wpdb->tables[] = 'bookmeta';
+
+		return;
+	}
 
 	public function wpb_cust_post_type_book() {
 
@@ -206,16 +214,6 @@ class Wp_Book_Admin {
 		register_taxonomy( 'book-tag', array( 'book' ), $args );
 
 	}
-
-	public function bookmeta_integrate_wpdb() {
-		global $wpdb;
-
-		$wpdb->bookmeta = $wpdb->prefix . 'bookmeta';
-		$wpdb->tables[] = 'bookmeta';
-
-		return;
-	}
-
 	public function wpb_cust_meta_box() {
 		add_meta_box( "wpb-meta-book",
 									"Book Details",
@@ -243,93 +241,5 @@ class Wp_Book_Admin {
 		<?php
 	}
 
-	public function wpb_save_book_metabox_data( $post_id, $post ) {
-		if( !isset( $_POST[ 'wp_wpb_cpt_nonce' ] ) || !wp_verify_nonce( $_POST[ 'wp_wpb_cpt_nonce' ], basename( __FILE__ ))) { // To Verify Nonce
-				return $post_id;
-		}
-
-		$post_slug = "book";
-		if( $post_slug != $post->post_type ){ // Verifying slug value
-			return;
-		}
-
-		// save data to database
-		$auth_name = '';
-		$price = '';
-		$pub_name = '';
-		$year = '';
-		$edition = '';
-		$url = '';
-		if( !empty( $_POST[ 'author_name' ]) ) {
-			$auth_name = sanitize_text_field( $_POST[ 'author_name' ] );
-			update_book_meta( $post_id, "book_author_name", $auth_name );
-		}
-		if( !empty( $_POST[ 'price' ]) ) {
-			$auth_name = sanitize_text_field( $_POST[ 'price' ] );
-			update_book_meta( $post_id, "book_price", $auth_name );
-		}
-		if( !empty( $_POST[ 'publisher' ]) ) {
-			$auth_name = sanitize_text_field( $_POST[ 'publisher' ] );
-			update_book_meta( $post_id, "book_publisher", $auth_name );
-		}
-		if( !empty( $_POST[ 'year' ]) ) {
-			$auth_name = sanitize_text_field( $_POST[ 'year' ] );
-			update_book_meta( $post_id, "book_year", $auth_name );
-		}
-		if( !empty( $_POST[ 'edition' ]) ) {
-			$auth_name = sanitize_text_field( $_POST[ 'edition' ] );
-			update_book_meta( $post_id, "book_edition", $auth_name );
-		}
-		if( !empty( $_POST[ 'ur_l' ]) ) {
-			$auth_name = sanitize_text_field( $_POST[ 'ur_l' ] );
-			update_book_meta( $post_id, "book_url", $auth_name );
-		}
-	}
-	public function wpb_cust_menu_page() {
-		add_menu_page( 'WPT Book Menu', 'Books Menu', 'manage_options', 'book_menu', array( $this, 'wpb_create_book_menu_page' ) );
-	}
-
-	public function wpb_create_book_menu_page() {
-		require_once 'partials/wp-book-admin-display.php';
-	}
-
-	/***************************************************
-	* This function will register settings for books menu
-	***************************************************/
-	public function wpb_book_register_settings() {
-		register_setting( 'books-setting-group', 'currency' );
-		register_setting( 'books-setting-group', 'post-per-page' );
-		add_settings_section( 'books-setting-section', 'Books setting section', array( $this, 'wpb_book_settings_section' ), 'book_menu' );
-		add_settings_field( 'book-currency', 'Currency', array( $this, 'wpb_book_currency' ), 'book_menu', 'books-setting-section' );
-		add_settings_field( 'book-post-pp', 'Posts Per Page', array( $this, 'wpb_book_post_pp' ), 'book_menu', 'books-setting-section' );
-	}
-
-	public function wpb_book_settings_section() {}
-
-	public function wpb_book_currency() {
-		echo '<select name="currency" id="currency">
-						<option value="Dollar">$ - dollar</option>
-						<option value="Rupees">Rs. - rupees</option>
-					</select>';
-	}
-
-	public function wpb_book_post_pp() {
-		echo '<input type="text" name="post-per-page" value=""/>';
-	}
 
 }
-	function add_book_meta( $book_id, $meta_key, $meta_value, $unique = false ) {
-		return add_metadata( 'book', $book_id, $meta_key, $meta_value, $unique);
-	}
-
-	function delete_book_meta( $book_id, $meta_key, $meta_value = '') {
-		return delete_metadata( 'book', $book_id, $meta_key, $meta_value );
-	}
-
-	function get_book_meta( $book_id, $key = '', $single = true ) {
-		return get_metadata( 'book', $book_id, $key, $single );
-	}
-
-	function update_book_meta( $book_id, $meta_key, $meta_value, $prev_value = '' ) {
-		return update_metadata( 'book', $book_id, $meta_key, $meta_value, $prev_value );
-	}
