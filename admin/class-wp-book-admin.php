@@ -321,7 +321,23 @@ class Wp_Book_Admin {
 	public function wpb_book_post_pp() {
 		echo '<input type="text" name="post-per-page" value=""/>';
 	}
+	public function wpb_top_five_widget() {
+		wp_add_dashboard_widget( "top_five_book_widget",
+														 "Top 5 books",
+													 	 array( $this, "wpb_get_top_five_books" ) );
+	}
 
+	public function wpb_get_top_five_books() {
+		$args = [
+			'orderby' => 'count',
+			'order' => 'DESC',
+			'number' => 5,
+			'show_count' => 1,
+			'taxonomy' => 'book-category',
+			'style' => 'none',
+		];
+		wp_list_categories( $args );
+	}
 
 }
 
