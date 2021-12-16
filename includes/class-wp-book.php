@@ -157,10 +157,13 @@ class Wp_Book {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		$this->loader->add_action( 'init', $plugin_admin, 'bookmeta_integrate_wpdb', 0 );
+		$this->loader->add_action( 'switch_blog', $plugin_admin, 'bookmeta_integrate_wpdb', 0);
 		$this->loader->add_action( 'init', $plugin_admin, 'wpb_cust_post_type_book' );
 		$this->loader->add_action( 'init', $plugin_admin, 'wpb_cust_hie_taxonomy' );
 		$this->loader->add_action( 'init', $plugin_admin, 'wpb_cust_nonhie_taxonomy' );
 		$this->loader->add_action( 'add_meta_boxes_book', $plugin_admin, 'wpb_cust_meta_box' );
+		$this->loader->add_action( 'save_post_book', $plugin_admin, 'wpb_save_book_metabox_data', 10, 2 );
 	}
 	/**
 	 * Register all of the hooks related to the public-facing functionality

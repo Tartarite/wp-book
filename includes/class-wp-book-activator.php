@@ -30,6 +30,24 @@ class Wp_Book_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'bookmeta';
+		$charset_collate = $wpdb->get_charset_collate();
+		$max_index_length = 191;
+
+		$sql = "CREATE TABLE $table_name(
+											meta_id bigint(20) unsigned NOT NULL auto_increment,
+											book_id bigint(20) unsigned NOT NULL default '0',
+											meta_key varchar(255) default NULL,
+											meta_value longtext,
+											PRIMARY KEY  (meta_id),
+											KEY book_id (book_id),
+											KEY meta_key (meta_key($max_index_length))
+		  								) $charset_collate;";
+
+		dbDelta( $sql );
+		flush_rewrite_rules();
 
 	}
 
