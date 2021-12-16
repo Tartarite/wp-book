@@ -99,5 +99,47 @@ class Wp_Book_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-book-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+	public function cust_post_type_book() {
 
+		/*
+		* This function will add custom post type named 'Book'.
+		*/
+
+		$labels = array(
+			'name' 					=> _x( 'Books', 'Post Type General Name' ),
+			'singular_name' 		=> _x( 'Book', 'Post Type Singular Name' ),
+			'menu_name' 			=> __( 'Book' ),
+			'all_items' 			=> __( 'All Books' ),
+			'view_item' 			=> __( 'View Book' ),
+			'add_new_item' 			=> __( 'Add New Book' ),
+			'add_new' 				=> __( 'Add New' ),
+			'edit_item' 			=> __( 'Edit Book' ),
+			'update_item' 			=> __( 'Update Book' ),
+			'search_item' 			=> __( 'Search Book'),
+			'not_found' 			=> __( 'Book Not Found' ),
+			'not_found_in_trash' 	=> __( 'Book Not Found In Trash' )
+		);
+
+		$args = array(
+			'labels' 				=> $labels,
+			'description'			=> 'Book custom post type.',
+			'public' 				=> true,
+			'has_archive' 			=> true,
+			'publicly_queryable' 	=> true,
+			'query_var'          	=> true,
+			'hierarchical'       	=> false,
+			'show_ui'            	=> true,
+      		'show_in_menu'       	=> true,
+			'show_in_nav_menus'		=> true,
+			'show_in_admin_bar'		=> true,
+			'menu_position'			=> 6,
+			'rewrite'            	=> array( 'slug' => 'book' ),
+      		'capability_type'    	=> 'post',
+			'supports'           	=> array( 'title', 'editor', 'author', 'thumbnail' ),
+      		'taxonomies'         	=> array( 'category', 'post_tag' ),
+			'show_in_rest'       	=> true
+		);
+
+		register_post_type( 'book', $args );
+	}
 }
