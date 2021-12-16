@@ -131,12 +131,10 @@ class Wp_Book_Admin {
 			'hierarchical'			=> false,
 			'show_ui'				=> true,
 			'show_in_menu'			=> true,
-			'show_in_nav_menus'		=> true,
-			'show_in_admin_bar'		=> true,
 			'menu_position'			=> 6,
 			'rewrite'				=> array( 'slug' => 'book' ),
 			'capability_type'		=> 'post',
-		//	'supports'				=> array( 'title', 'editor', 'author', 'thumbnail' ),
+			'supports'				=> array( 'title', 'editor', 'author', 'thumbnail' ),
 		//	'taxonomies'			=> array( 'category', 'post_tag' ),
 			'show_in_rest'			=> true
 		);
