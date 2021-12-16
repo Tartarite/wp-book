@@ -99,14 +99,6 @@ class Wp_Book_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-book-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
-	public function bookmeta_integrate_wpdb() {
-		global $wpdb;
-
-		$wpdb->bookmeta = $wpdb->prefix . 'bookmeta';
-		$wpdb->tables[] = 'bookmeta';
-
-		return;
-	}
 
 	public function wpb_cust_post_type_book() {
 
@@ -214,6 +206,7 @@ class Wp_Book_Admin {
 		register_taxonomy( 'book-tag', array( 'book' ), $args );
 
 	}
+
 	public function bookmeta_integrate_wpdb() {
 		global $wpdb;
 
@@ -313,13 +306,101 @@ class Wp_Book_Admin {
 
 	public function wpb_book_currency() {
 		echo '<select name="currency" id="currency">
-						<option value="Dollar">$ - dollar</option>
-						<option value="Rupees">Rs. - rupees</option>
+						<option value="$">USD</option>
+						<option value="Rs">Rupees</option>
 					</select>';
 	}
 
 	public function wpb_book_post_pp() {
 		echo '<input type="text" name="post-per-page" value=""/>';
+	}
+	public function wpb_book_shortcode( $atts ) {
+		$atts = shortcode_atts( array(
+			'book_id' 		=> '',
+			'author_name' => '',
+			'year' 				=> '',
+			'category' 		=> '',
+			'tag' 				=> '',
+			'publisher' 	=> ''
+		), $atts );
+		$args = array(
+			'post_type' => 'book',
+			'post_status' => 'publish',
+			'author' => $atts['author_name']
+		);
+
+		if( $atts[ 'book_id' ] != '' ){
+			$args[ 'p' ] = $atts[ 'book_id' ];
+		}
+
+		if( $atts[ 'category' ] != '' ){
+			$args[ 'tax_query' ] = array(
+				array(
+					'taxonomy' => 'book-category',
+          'terms' => array( $atts[ 'category' ] ),
+          'field' => 'name',
+          'operator' => 'IN'
+				),
+			);
+		}
+
+		if( $atts[ 'tag' ] != '' ){
+			$args[ 'tax_query' ] = array(
+				array(
+					'taxonomy' => 'book-tag',
+          'terms' => array( $atts[ 'tag' ] ),
+          'field' => 'name',
+          'operator' => 'IN'
+				),
+			);
+		}
+
+		return $this->wpb_book_shortcode_function( $args );
+	}
+
+	public function wpb_book_shortcode_caller() {
+		add_shortcode( 'book', array( $this, 'wpb_book_shortcode' ) );
+	}
+
+	public function wpb_book_shortcode_function( $args ) {
+		global $wpb_settings;
+
+		$wpb_query = new WP_Query( $args );
+		if( $wpb_query->have_posts() ) {
+			while( $wpb_query->have_posts() ){
+				$wpb_query->the_post();
+
+				$wpb_info_author_name = get_metadata( 'book', get_the_id(), 'book_author_name' )[0];
+        $wpb_info_price = get_metadata( 'book', get_the_id(), 'book_price' )[0];
+				?>
+				<ul>
+					<?php
+					if( get_the_title() != '' ){
+						?>
+							<li>Book Title: <a href="<?php get_post_permalink(); ?>"><?php echo get_the_title(); ?></a></li>
+						<?php
+					}
+					if( $wpb_info_author_name != ''  ){
+          ?>
+          	<li>Author Name: <?php echo $wpb_info_author_name; ?></li>
+          <?php
+          }
+
+					if( $wpb_info_price != '' ){
+          ?>
+        		<li>Book Price: <?php echo $wpb_info_price; ?></li>
+          <?php
+          }
+					?>
+				</ul>
+				<?php
+			}
+		}
+		else {
+			?>
+				<h1>Sorry no Books Found</h1>
+			<?php
+		}
 	}
 	public function wpb_top_five_widget() {
 		wp_add_dashboard_widget( "top_five_book_widget",
