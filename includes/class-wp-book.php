@@ -217,5 +217,4 @@ class Wp_Book {
 	public function get_version() {
 		return $this->version;
 	}
-
 }
