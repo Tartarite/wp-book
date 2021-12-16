@@ -143,10 +143,10 @@ class Wp_Book_Admin {
 		register_post_type( 'book', $args );
 	}
 
-	public function wpb_cust_taxonomies() {
+	public function wpb_cust_hie_taxonomies() {
 
 		/*
-		* This function will add custom hierarchical and non-hierarchical taxonomies for Book posts type.
+		* This function adds custom hierarchical taxonomy 'Category'.
 		*/
 
 		$labels = array(
@@ -173,5 +173,36 @@ class Wp_Book_Admin {
 		);
 
 		register_taxonomy( 'book-category', array( 'book' ), $args );
+	}
+
+	public function wpb_cust_nonhie_taxonomy() {
+
+		/*
+		* This function adds custom non-hierarchical taxonomy named 'Book Tag'.
+		*/
+
+		$labels = array(
+			'name' 				=> _x( 'Book Tags', 'Taxonomy General Name' ),
+			'singular_name' 	=> _x( 'Book Tag', 'Taxonomy Singular Name' ),
+			'search_items' 		=> __( 'Search For Book Tag' ),
+			'all_items'			=> __( 'All Book Tags' ),
+			'edit_item'			=> __( 'Edit Book Tag' ),
+			'update_item'		=> __( 'Update Book Tag' ),
+			'add_new_item'		=> __( 'Add New Book Tag' ),
+			'new_item_name'		=> __( 'New Book Tag' ),
+			'menu_name'			=> __( 'Book Tags' ),
+		);
+
+		$args = array(
+			'hierarchical'      => false,
+			'labels'            => $labels,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'query_var'         => true,
+			'rewrite'           => [ 'slug' => 'book-tag' ],
+		);
+
+		register_taxonomy( 'book-tag', array( 'book' ), $args );
+
 	}
 }
