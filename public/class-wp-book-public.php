@@ -51,7 +51,10 @@ class Wp_Book_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
+		$this->load_depend();
+	}
+	public function load_depend() {
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-wp-cust-book-widg.php';
 	}
 
 	/**
@@ -100,4 +103,8 @@ class Wp_Book_Public {
 
 	}
 
+	public function wpb_cust_book_widget() {
+		$wpb_cat_class = new Wpb_Category_Widget();
+		register_widget( $wpb_cat_class );
+	}
 }

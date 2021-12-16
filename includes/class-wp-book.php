@@ -167,6 +167,7 @@ class Wp_Book {
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'wpb_book_register_settings' );
 		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'wpb_top_five_widget' );
 		$this->loader->add_action( 'init', $plugin_admin, 'wpb_book_shortcode_caller' );
+		$this->loader->add_action( 'widgets_init', $plugin_public, 'wpb_cust_book_widget' );
 	}
 	/**
 	 * Register all of the hooks related to the public-facing functionality
