@@ -214,6 +214,15 @@ class Wp_Book_Admin {
 		register_taxonomy( 'book-tag', array( 'book' ), $args );
 
 	}
+	public function bookmeta_integrate_wpdb() {
+		global $wpdb;
+
+		$wpdb->bookmeta = $wpdb->prefix . 'bookmeta';
+		$wpdb->tables[] = 'bookmeta';
+
+		return;
+	}
+
 	public function wpb_cust_meta_box() {
 		add_meta_box( "wpb-meta-book",
 									"Book Details",
@@ -224,6 +233,7 @@ class Wp_Book_Admin {
 	}
 
 	public function wpb_cust_meta_box_content( $post ) {
+		wp_nonce_field( basename( __FILE__ ), "wp_wpb_cpt_nonce" );
 		?>
 			<label for="author_name">Author Name : </label><br/>
 			<?php $ath_name = get_book_meta( $post->ID, "book_author_name" );?>
@@ -240,6 +250,64 @@ class Wp_Book_Admin {
 			<input name="ur_l" id="ur_l" type="text"/><br/>
 		<?php
 	}
+	public function wpb_save_book_metabox_data( $post_id, $post ) {
+		if( !isset( $_POST[ 'wp_wpb_cpt_nonce' ] ) || !wp_verify_nonce( $_POST[ 'wp_wpb_cpt_nonce' ], basename( __FILE__ ))) { // To Verify Nonce
+				return $post_id;
+		}
+
+		$post_slug = "book";
+		if( $post_slug != $post->post_type ){ // Verifying slug value
+			return;
+		}
+
+		// save data to database
+		$auth_name = '';
+		$price = '';
+		$pub_name = '';
+		$year = '';
+		$edition = '';
+		$url = '';
+		if( !empty( $_POST[ 'author_name' ]) ) {
+			$auth_name = sanitize_text_field( $_POST[ 'author_name' ] );
+			update_book_meta( $post_id, "book_author_name", $auth_name );
+		}
+		if( !empty( $_POST[ 'price' ]) ) {
+			$auth_name = sanitize_text_field( $_POST[ 'price' ] );
+			update_book_meta( $post_id, "book_price", $auth_name );
+		}
+		if( !empty( $_POST[ 'publisher' ]) ) {
+			$auth_name = sanitize_text_field( $_POST[ 'publisher' ] );
+			update_book_meta( $post_id, "book_publisher", $auth_name );
+		}
+		if( !empty( $_POST[ 'year' ]) ) {
+			$auth_name = sanitize_text_field( $_POST[ 'year' ] );
+			update_book_meta( $post_id, "book_year", $auth_name );
+		}
+		if( !empty( $_POST[ 'edition' ]) ) {
+			$auth_name = sanitize_text_field( $_POST[ 'edition' ] );
+			update_book_meta( $post_id, "book_edition", $auth_name );
+		}
+		if( !empty( $_POST[ 'ur_l' ]) ) {
+			$auth_name = sanitize_text_field( $_POST[ 'ur_l' ] );
+			update_book_meta( $post_id, "book_url", $auth_name );
+		}
+	}
+
+}
 
 
+function add_book_meta( $book_id, $meta_key, $meta_value, $unique = false ) {
+	return add_metadata( 'book', $book_id, $meta_key, $meta_value, $unique);
+}
+
+function delete_book_meta( $book_id, $meta_key, $meta_value = '') {
+	return delete_metadata( 'book', $book_id, $meta_key, $meta_value );
+}
+
+function get_book_meta( $book_id, $key = '', $single = true ) {
+	return get_metadata( 'book', $book_id, $key, $single );
+}
+
+function update_book_meta( $book_id, $meta_key, $meta_value, $prev_value = '' ) {
+	return update_metadata( 'book', $book_id, $meta_key, $meta_value, $prev_value );
 }
