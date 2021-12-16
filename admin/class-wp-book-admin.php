@@ -241,4 +241,5 @@ class Wp_Book_Admin {
 		<?php
 	}
 
+
 }
